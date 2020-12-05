@@ -24,8 +24,8 @@ import pbl2
 
 # def filesize(s):
 #     pass
-
-if if __name__ == "__main__":
+BUFSIZE = 4096
+if  __name__ == "__main__":
     server_port = int(sys.argv[1])
     server_name = sys.argv[2]
     client_socket = socket(AF_INET,SOCK_STREAM)
@@ -50,21 +50,21 @@ if if __name__ == "__main__":
             b = sys.argv[8]
             mes = dem + fn + pbl2.genkey() + part + a + b + '\n'
             with open(fn,'wb') as f:
-            while True:
-                data = client_socket.recv(BUFSIZE)
-                if len(data) <= 0:
-                    break
-                f.write(data)
+                while True:
+                    data = client_socket.recv(BUFSIZE)
+                    if len(data) <= 0:
+                        break
+                    f.write(data)
             client_socket.close()
             
         else:
             mes = dem + fn + pbl2.genkey() + part + '\n'
             with open(fn,'wb') as f:
-            while True:
-                data = client_socket.recv(BUFSIZE)
-                if len(data) <= 0:
-                    break
-                f.write(data)
+                while True:
+                    data = client_socket.recv(BUFSIZE)
+                    if len(data) <= 0:
+                        break
+                    f.write(data)
             client_socket.close()
             client_socket.send(mes.encode())
     elif dem == "REP":
