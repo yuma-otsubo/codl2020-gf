@@ -5,12 +5,14 @@ import time
 import os
 from socket import *
 BUFSIZE =5300 #一度に受信するデータサイズ
-#file_name =sys.argv[1]
 
-def interact_with_client(s):
+def in_com(s):
+    s.recv(1024).decode()
+def interact_with_client(s,file_name):
     start_time =time.time()
     req_msg =s.recv(BUFSIZE).decode()#最大BUFSIZEバイトを受信する
     send_size=int(req_msg.split()[0])#最初の空白文字までに書かれているのがサイズなのでそれを解釈する
+    words = in_com(s)
     with open(file_name,'rb') as f:
          data=f.read(send_size)
          s.send(data)
@@ -56,6 +58,7 @@ def interact_with_client(s):
         	s.send(code.encode())
     	#except Error:
     	#時間の都合で途中
+
     
     s.close()
 
@@ -72,6 +75,8 @@ while True:
     #sentence = connection_socket.recv(1024).decode()
     #connection_socket.send(sentence.encode())
     #connection_socket.close()
+    file_name =sys.arv[1]
     s,addr =server_socket.accept()
-    interact_with_client(s)#クライアントとの処理は別関数で
+
+    interact_with_client(s,file_name)#クライアントとの処理は別関数で
 
