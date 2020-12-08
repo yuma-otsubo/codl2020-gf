@@ -5,23 +5,24 @@ import time
 import os
 from socket import *
 BUFSIZE =5300 #一度に受信するデータサイズ
-file_name =sys.arv[1]
-
-def interact_with_client(s):
+def in_com(s):
+    s.recv(1024).decode()
+def interact_with_client(s,file_name):
     start_time =time.time()
     req_msg =s.recv(BUFSIZE).decode()#最大BUFSIZEバイトを受信する
     send_size=int(req_msg.split()[0])#最初の空白文字までに書かれているのがサイズなのでそれを解釈する
+    words = in_com(s)
     with open(file_name,'rb') as f:
-	 data=f.read(send_size)
-	 s.send(data)
+        data=f.read(send_size)
+        s.send(data)
     end_time=time.time()
     elapsed_time=end_time -start_time
     try:#GET
        #1で処理
        words[0]='GET'
        file_name=words[1]
-       x=float(word[2])#pbl2.genkey()の結果を予め送る方法がわかんない
-       y=float(word[3])
+       x=float(words[2])#pbl2.genkey()の結果を予め送る方法がわかんない
+       y=float(words[3])
        code="OK Sending" +file_name + "from" + x + "to" + y +"total"+ (y-x+1) + "bytes at" + elapsed_time +"\n"
        s.send(code.encode())
     except FileNotFoundError:
@@ -44,7 +45,7 @@ def interact_with_client(s):
     except FileNotFoundError:
         code="NG 101 No such file"
         s.send(code.encode())
-    except SyntaxError#ここも同様
+    except SyntaxError: #ここも同様
         code="NG 301 Invalid command"
         s.send(code.encode())
     
@@ -59,6 +60,7 @@ def interact_with_client(s):
         code="NG 301 Invalid command"
         s.send(code.encode())
     except Error:
+        pass
     #時間の都合で途中
     
     s.close()
@@ -76,6 +78,8 @@ while True:
     #sentence = connection_socket.recv(1024).decode()
     #connection_socket.send(sentence.encode())
     #connection_socket.close()
+    file_name =sys.arv[1]
     s,addr =server_socket.accept()
-    interact_with_client(s)#クライアントとの処理は別関数で
+
+    interact_with_client(s,file_name)#クライアントとの処理は別関数で
 
