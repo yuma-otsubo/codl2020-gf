@@ -26,46 +26,46 @@ import pbl2
 #     pass
 BUFSIZE = 4096
 if  __name__ == "__main__":
-    server_port = int(sys.argv[1])
-    server_name = sys.argv[2]
+    server_name = sys.argv[1]
+    server_port = int(sys.argv[2])
     client_socket = socket(AF_INET,SOCK_STREAM)
     client_socket.connect((server_name,server_port))
-    dem = sys.argv[3]
-    fn = sys.argv[4]
-    if dem == "SIZE":
-        mes = dem + fn + '\n'
-        client_socket.send(mes.encode())
-        with open(fn,'wb') as f:
-            while True:
-                data = client_socket.recv(BUFSIZE)
-                if len(data) <= 0:
-                    break
-                f.write(data)
-        client_socket.close()
-    elif dem == "GET":
-        part = sys.argv[6]
-        getarg = pbl2.genkey(sys.argv[5])
-        if part == "PARTIAL":
-            a = sys.argv[7]
-            b = sys.argv[8]
-            mes = dem + fn + pbl2.genkey() + part + a + b + '\n'
-            with open(fn,'wb') as f:
-                while True:
-                    data = client_socket.recv(BUFSIZE)
-                    if len(data) <= 0:
-                        break
-                    f.write(data)
-            client_socket.close()
-            
-        else:
-            mes = dem + fn + pbl2.genkey() + part + '\n'
-            with open(fn,'wb') as f:
-                while True:
-                    data = client_socket.recv(BUFSIZE)
-                    if len(data) <= 0:
-                        break
-                    f.write(data)
-            client_socket.close()
+    while True:
+        com = input().split()
+        if com[0] == "SIZE":
+            mes = com[0] + com[1] + '\n'
             client_socket.send(mes.encode())
-    elif dem == "REP":
-        pass
+            with open(com[1],'wb') as f:
+                while True:
+                    data = client_socket.recv(BUFSIZE)
+                    if len(data) <= 0:
+                        break
+                    f.write(data)
+            client_socket.close()
+        elif com[0] == "GET":
+            part = com[3]
+            getarg = pbl2.genkey(com[2])
+            if part == "PARTIAL":
+                a = com[4]
+                b = com[5]
+                mes = com[0] + com[1] + pbl2.genkey() + part + a + b + '\n'
+                with open(com[1],'wb') as f:
+                    while True:
+                        data = client_socket.recv(BUFSIZE)
+                        if len(data) <= 0:
+                            break
+                        f.write(data)
+                client_socket.close()
+                
+            else:
+                mes = com[0] + com[1] + pbl2.genkey() + part + '\n'
+                with open(com[1],'wb') as f:
+                    while True:
+                        data = client_socket.recv(BUFSIZE)
+                        if len(data) <= 0:
+                            break
+                        f.write(data)
+                client_socket.close()
+                client_socket.send(mes.encode())
+        elif com[0] == "REP":
+            pass
